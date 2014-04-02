@@ -1,0 +1,130 @@
+#administration_content{
+background:#fff;
+/*height:400px;*/
+padding-top:80px;
+width:100%;
+position:relative;
+float:left;
+}
+#settings_menu{
+float:left;
+width:250px;
+height:400px;
+background:#fff;
+margin-left:50px;
+}
+#settings_menu ul{
+list-style-type: none;
+margin:20px;
+}
+#settings_menu ul li{
+margin-bottom:15px;
+padding:6px 6px 6px 25px;
+background:#fff url(../images/skin/icons.png) no-repeat -13px -65px;
+border:1px solid #fff;
+}
+#settings_menu ul li:hover,#settings_menu ul li.active{
+border:1px solid #b1b1b2;
+-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+-webkit-box-shadow: -1px 1px 2px -1px rgba(0,0,0,0.1);
+	-moz-box-shadow:-1px 1px 2px -1px rgba(0,0,0,0.1);
+	box-shadow: -1px 1px 2px -1px rgba(0,0,0,0.1);
+	
+	cursor:pointer;
+}
+#settings_menu ul li a{
+text-decoration:none;
+color:#767575;
+}
+#settings_menu ul li a:hover{
+color:#302f30;
+font-size:16px;
+}
+
+#settings_content{
+/*height:400px;*/
+width:950px;
+float:left;
+/*background:#ed0b6b;*/
+border-left:0px solid #cccacb;
+}
+#dashboard_content{
+background:#fff;
+width:930px;
+float:left;
+padding:0px;
+}
+#member_content{
+background:#fff;
+width:930px;
+float:left;
+padding:0px;
+}
+ .row{
+background:#fff;
+margin-bottom:10px;
+float:left;
+width:930px;
+}
+.row p,h1,h2,h3,h4{
+margin:10px;
+color:#888c8b;
+font-family:open sans,lucida grande,lucida sans unicode,helvetica,arial,sans-serif;
+
+}
+.row p{
+font-size:13px;
+}
+.row h1
+{
+color:#898987;
+font-size:14px;
+}
+ .row h4,h3
+{
+font-size:14px;
+color:#565858;
+}
+ .row .col{
+width:930px;
+float:left;
+margin-top:1px;
+background:#f6f6f6;
+-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+#dashboard_content .row .col1{
+width:400px;
+background:#f6f6f6;
+float:left;
+margin-right:10px;
+-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+#dashboard_content .row .col2{
+width:520px;
+background:#f6f6f6;
+float:right;
+-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#member_content .row .col{
+background:#fff;
+border-bottom:1px solid #bbbcbc;
+}
+#member_content .row .col:hover{
+background:#f6f6f6;
+cursor:pointer;
+}
+
+
+
+
+
+
