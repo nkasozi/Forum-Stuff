@@ -105,10 +105,10 @@ Route::get('new_conversation', array('uses' => 'AdminController@GetNewConversati
 Route::post('new_conversation', array('uses' => 'AdminController@TryToCreateANewConversation'))->before('auth');
 
 //THIS IS REQUEST TO VIEW THE ADMIN FORUM SETTINGS PANEL CONTENT
-Route::get('forum_settings', array('uses' => 'AdminController@GetForumSettings', 'as' => 'forum_settings'))->before('auth');
+Route::get('forum_settings', array('uses' => 'AdminController@GetForumSettingsView', 'as' => 'forum_settings'))->before('auth');
 
-////THIS IS REQUEST TO VIEW THE ADMIN APPEARANCE PANEL CONTENT
-Route::get('appearance', array('uses' => 'AdminController@GetForumAppearence', 'as' => 'appearance'))->before('auth');
+//THIS IS REQUEST TO SAVE CHANGES IN FORUM SETTINGS
+Route::post('forum_settings', array('uses' => 'AdminController@TryToChangeForumSettings'))->before('auth');
 
 //THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
 Route::get('approve', array('uses' => 'AdminController@GetAllMembersToApprove', 'as' => 'approve'))->before('auth');

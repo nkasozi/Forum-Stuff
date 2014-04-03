@@ -176,9 +176,14 @@ class UserController extends BaseController
     //else find user with given id
     $user = User::find($user_id);
 
+    //if no user found
+    if ($user == null)
+    {
+      //take user to safe page and tell hime bad news
+      return Redirect::route('conversations')->withErrors('Sorry but we cant find the user');
+    }
+
     $time_elapsed = $this->TimeElapsed($user->updated_at);
-
-
 
     //create his profile page
     return View::make('layouts.profile')->with('user', $user)->with('time_elapsed', $time_elapsed);
@@ -214,6 +219,14 @@ class UserController extends BaseController
     //else find user with given id
     $user = User::find($user_id);
 
+    //if no user found
+    if ($user == null)
+    {
+      //take user to safe page and tell hime bad news
+      return Redirect::route('conversations')->withErrors('Sorry but we cant find the user');
+    }
+
+
     $time_elapsed = $this->TimeElapsed($user->updated_at);
 
     $all_specialities = Speciality::all();
@@ -243,6 +256,7 @@ class UserController extends BaseController
   {
     //get the id of the conversation 
     $conversation_id = Input::get('id');
+
     //echo 'conversation_id='.$conversation_id;
     Session::put('conversation_id', $conversation_id);
 
@@ -259,6 +273,13 @@ class UserController extends BaseController
       $user_id = $post->user_id;
 
       $user = User::find($user_id);
+
+      //if no user found
+      if ($user == null)
+      {
+        continue;
+      }
+
       //echo $user;
       array_push($users, $user);
     }
@@ -312,7 +333,13 @@ class UserController extends BaseController
       $user_id = $post->user_id;
 
       $user = User::find($user_id);
+      //if no user found
+      if ($user == null)
+      {
+        continue;
+      }
 
+      //push to array
       array_push($users, $user);
     }
 
@@ -349,6 +376,14 @@ class UserController extends BaseController
 
     //else find user with given id
     $user = User::find($user_id);
+
+    //if no user found
+    if ($user == null)
+    {
+      //take user to safe page and tell hime bad news
+      return Redirect::route('conversations')->withErrors('Sorry but we cant find the user');
+    }
+
 
     $time_elapsed = $this->TimeElapsed($user->updated_at);
 
@@ -401,8 +436,8 @@ class UserController extends BaseController
     Auth::user()->email    = $new_email;
     Auth::user()->save();
 
-    //redirect with sucess message
-    return Redirect::route('conversations')->with('flash_notice', 'Details Saved');
+    //redirect to change password or email page with sucess message
+    return Redirect::back()->with('flash_notice', 'Details Saved');
   }
 
   //THIS ATTEMPTS TO UPDATE THE USERS PROFILE WITH THE NEW INFO INCLUDING PROFILE PIC LOC AND ABOUT ME DATA
@@ -521,7 +556,10 @@ class UserController extends BaseController
     //else find user with given id
     $user = User::find($user_id);
 
-    $user->status = 'active';
+    if ($user != NULL)
+    {
+      $user->status = 'active';
+    }
 
     return View::make('layouts.login')->with('flash_notice', 'Welcome,Login to get started');
   }
@@ -556,11 +594,13 @@ class UserController extends BaseController
     //else find user with given id
     $user = User::find($user_id);
 
+    //if no user found
     if ($user == null)
     {
       //take user to safe page and tell hime bad news
       return Redirect::route('conversations')->withErrors('Sorry but we cant find the user');
     }
+
 
     $time_elapsed = $this->TimeElapsed($user->updated_at);
 
@@ -628,7 +668,6 @@ class UserController extends BaseController
     //if the seconds are less than a minute
     if ($calculate_seconds <= 60)
     {
-      echo 'seconds=' . $calculate_seconds . '<br/>';
       return 'A few seconds Ago';
     }
 
@@ -698,7 +737,14 @@ class UserController extends BaseController
     //search for conversations mtching search term in database
     $conversations = Conversation::where('title', 'like', '%' . $criteria . '%')->get();
 
-    return View::make('layouts.conversations')->with('conversations', $conversations)->with('flash_notice', 'Results For : ' . $criteria);
+    if (count($conversations) > 0)
+    {
+      return View::make('layouts.conversations')->with('conversations', $conversations)->with('flash_notice', 'Results For : ' . $criteria);
+    }
+    else
+    {
+      return Redirect::back()->withErrors('Your Search Has Returned No results');
+    }
   }
 
   //THIS USES A GIVEN SEARCH TERM TO LOOK FOR A MATCH IN POSTS TABLE
@@ -741,16 +787,31 @@ class UserController extends BaseController
     //for each post get the user who created it
     foreach ($posts as $post)
     {
-
+      //get id of user who made post
       $user_id = $post->user_id;
 
+      //find the user
       $user = User::find($user_id);
 
+      //if no user found
+      if ($user == null)
+      {
+        //go to next iteration
+        continue;
+      }
+
+      //push to array
       array_push($users, $user);
     }
-
-    //create view with the results
-    return View::make('layouts.posts')->with('posts', $posts)->with('users', $users)->with('id', $conversation_id)->with('flash_notice', 'Search Results for : ' . $criteria);
+    if (count($posts) > 0)
+    {
+      //create view with the results
+      return View::make('layouts.posts')->with('posts', $posts)->with('users', $users)->with('id', $conversation_id)->with('flash_notice', 'Search Results for : ' . $criteria);
+    }
+    else
+    {
+      return Redirect::back()->withErrors('Your Search Has Returned No results');
+    }
   }
 
 }

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     $this->call('PostTableSeeder');
     $this->call('ConversationTableSeeder');
     $this->call('SpecialityTableSeeder');
+    $this->call('SettingTableSeeder');
   }
 
 }

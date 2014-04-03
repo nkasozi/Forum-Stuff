@@ -12,12 +12,13 @@ class AdminController extends BaseController
     {
       return Redirect::route('conversations')->withErrors('Sorry But you are not an admin hence cant do this');
     }
+    
     $number_of_members       = User::all()->count();
     $number_of_conversations = Conversation::all()->count();
     $number_of_posts         = Post::all()->count();
-    $new_members_in_wk       = 2;
-    $new_conversations_in_wk = 2;
-    $new_posts_in_wk         = 2;
+    $new_members_in_wk       = $this->NumberOfNewMembersInWeek();
+    $new_conversations_in_wk = $this->NumberOfNewConversationsInWeek();
+    $new_posts_in_wk         = $this->NumberOfNewPostsInWeek();
     $statistics              = array(
         0 => $number_of_members,
         1 => $number_of_conversations,
@@ -29,6 +30,70 @@ class AdminController extends BaseController
     return View::make('layouts.admin.dashboard')->with('statistics', $statistics);
   }
 
+  public function NumberOfNewMembersInWeek()
+  {
+    //get all users
+    $users = User::all();
+    
+    //create array for new member
+    $new_members=array();
+    
+    //for each user determine if he created within the past week
+   
+    foreach ($users as $user)
+    {
+      if (($this->GetWeeksGoneBy($user->created_at)) == 1)
+      {
+        array_push($new_members, $user);
+      }
+      
+    }
+    return count($new_members);
+  }
+  
+  public function NumberOfNewConversationsInWeek()
+  {
+    //get all users
+    $conversations = Conversation::all();
+    
+    //create array for new member
+    $new_conversations=array();
+    
+    //for each user determine if he created within the past week
+   
+    foreach ($conversations as $conversation)
+    {
+      if (($this->GetWeeksGoneBy($conversation->created_at)) == 1)
+      {
+        array_push($new_conversations, $conversation);
+      }
+      
+    }
+    return count($new_conversations);
+  }
+  
+  public function NumberOfNewPostsInWeek()
+  {
+    //get all users
+    $posts =  Post::all();
+    
+    //create array for new member
+    $new_posts=array();
+    
+    //for each user determine if he created within the past week
+   
+    foreach ($posts as $post)
+    {
+      if (($this->GetWeeksGoneBy($post->created_at)) == 1)
+      {
+        array_push($new_posts, $post);
+      }
+      
+    }
+    return count($new_posts);
+  }
+
+  //ATTEMPTS TO SAVE CHANGES IN THE FORUM SETTINGS
   public function TryToChangeForumSettings()
   {
     //check if user is an admin
@@ -37,21 +102,122 @@ class AdminController extends BaseController
     {
       return Redirect::route('conversations')->withErrors('Sorry But you are not an admin hence cant do this');
     }
-  }
 
-  public function GetForumAppearence()
-  {
-    //check if user is an admin
-    //got u suckers
-    if (!$this->IsAnAdmin())
+    //get user input
+    $appearance          = Input::get('appearance');
+    $forum_title         = Input::get('forum_title');
+    $payment_duration    = Input::get('payment_duration');
+    $approval            = Input::get('approval');
+    $speciality          = Input::get('speciality');
+    $send_email          = Input::get('send_email');
+    $suspension_duration = Input::get('suspension_duration');
+    $registration_status = Input::get('registration');
+
+    //data to validate
+    $data = array(
+        'appearance'          => $appearance,
+        'title'               => $forum_title,
+        'payment_duration'    => $payment_duration,
+        'approval'            => $approval,
+        'send_email'          => $send_email,
+        'suspension_duration' => $suspension_duration,
+        'registration_status' => $registration_status
+    );
+
+    //validation rules
+    $rules = array(
+        'appearance'          => 'required',
+        'title'               => 'required',
+        'payment_duration'    => 'required|Integer',
+        'approval'            => 'required',
+        'send_email'          => 'required',
+        'suspension_duration' => 'required|Integer',
+        'registration_status' => 'required'
+    );
+
+    //validate the data
+    $validator = Validator::make($data, $rules);
+
+    //if valiadation fails
+    if ($validator->fails())
     {
-      return Redirect::route('conversations')->withErrors('Sorry But you are not an admin hence cant do this');
+      //take user back to forum settings page with errors
+      return Redirect::back()->withInput()->withErrors($validator);
     }
-    return View::make('layouts.admin.appearence');
+
+    //save appearance settings
+    $appearance_model = Setting::where('name', '=', 'appearance')->first();
+    if ($appearance_model != NULL)
+    {
+      $appearance_model->value = $appearance;
+      $appearance_model->save();
+    }
+
+    //save forum title setting
+    $title_model = Setting::where('name', '=', 'forum_title')->first();
+    if ($title_model != NULL)
+    {
+      $title_model->value = $forum_title;
+      $title_model->save();
+    }
+
+    //save payment duration setting
+    $payment_model = Setting::where('name', '=', 'payment_duration')->first();
+    if ($payment_model != NULL)
+    {
+      $payment_model->value = $payment_duration;
+      $payment_model->save();
+    }
+
+    //save approval setting
+    $approval_model = Setting::where('name', '=', 'approval')->first();
+    if ($approval_model != NULL)
+    {
+      $approval_model->value = $approval;
+      $approval_model->save();
+    }
+
+    //create a new speciality
+    if ($speciality != NULL)
+    {
+      $speciality_model             = new Speciality;
+      $now                          = date('Y-m-d H:i:s');
+      $speciality_model->speciality = $speciality;
+      $speciality_model->created_at = $now;
+      $speciality_model->updated_at = $now;
+      $speciality_model->save();
+    }
+
+    //save suspesion duration model
+    $suspension_model = Setting::where('name', '=', 'suspension_duration')->first();
+    if ($suspension_model != NULL)
+    {
+      $suspension_model->value = $suspension_duration;
+      $suspension_model->save();
+    }
+
+    //save send email setting
+    $send_email_model = Setting::where('name', '=', 'send_email')->first();
+    if ($send_email_model != NULL)
+    {
+      $send_email_model->value = $send_email;
+      $send_email_model->save();
+    }
+
+    //save registration status
+    $registration_status_model = Setting::where('name', '=', 'registration')->first();
+    if ($send_email_model != NULL)
+    {
+      $registration_status_model->value = $registration_status;
+      $registration_status_model->save();
+    }
+
+    //take user back to forum settings back with sucess message
+    return Redirect::back()->with('flash_notice', 'Changes Saved');
   }
 
-  //
-  public function GetForumSettings()
+  //RETURNS A VIEW WITH A FORUM SETTINGS
+  public function GetForumSettingsView()
   {
     //check if user is an admin
     //got u suckers
@@ -233,6 +399,75 @@ class AdminController extends BaseController
 
     //return user  to new conversation page and display sucess message
     return Redirect::back()->with('flash_notice', 'New Conversation created');
+  }
+
+  //RETURNS TEXT INDICATING THE TIME BETWEEN 2 DATES RANGING FROM SECONDS TO DAYS TO YEARS
+  public function TimeDifference($from_date, $to_date)
+  {
+
+    $year_1    = substr($from_date, 0, 4);
+    $months_1  = substr($from_date, 5, 2);
+    $days_1    = substr($from_date, 8, 2);
+    $hours_1   = substr($from_date, 11, 2);
+    $minutes_1 = substr($from_date, 14, 2);
+    $seconds_1 = substr($from_date, 17, 2);
+
+    $years_2   = substr($to_date, 0, 4);
+    $months_2  = substr($to_date, 5, 2);
+    $days_2    = substr($to_date, 8, 2);
+    $hours_2   = substr($to_date, 11, 2);
+    $minutes_2 = substr($to_date, 14, 2);
+    $seconds_2 = substr($to_date, 17, 2);
+
+    $universal_time_1 = date('U', mktime($hours_1, $minutes_1, $seconds_1, $months_1, $days_1, $year_1));
+    $universal_time_2 = date('U', mktime($hours_2, $minutes_2, $seconds_2, $months_2, $days_2, $years_2));
+
+    //calculate seconds between 2 days
+    $calculate_seconds = (int) ($universal_time_1 - $universal_time_2);
+
+    return $calculate_seconds;
+  }
+
+  //RETURNS THE WEEKS THAT HAT HAVE ELAPSED FROM GIVEN DATE
+  public function GetWeeksGoneBy($from_date)
+  {
+    $now               = date('Y-m-d H:i:s');
+    $calculate_seconds = $this->TimeDifference($from_date, $now);
+    //if the seconds are less than a minute
+    if ($calculate_seconds <= 60)
+    {
+      return 1;
+    }
+
+    //Number of minutes between 2 dates
+    $calculate_minutes = (int) ($calculate_seconds / 60);
+
+    //if the minutes are less than an hour
+    if ($calculate_minutes <= 60)
+    {
+      return 1;
+    }
+
+    //Number of hours between 2 dates
+    $calculate_hours = (int) ($calculate_minutes / 60);
+
+    //if the hours are less than a day
+    if ($calculate_hours <= 24)
+    {
+      return 1;
+    }
+
+
+    //Number of days between the 2 dates
+    $calculate_days = (int) ($calculate_hours / 24);
+
+    //if the days are less than a week
+    if ($calculate_days <= 7)
+    {
+      return 1;
+    }
+
+    return $calculate_days;
   }
 
   // THIS DELETES A MEMBER FROM THE DATABASE

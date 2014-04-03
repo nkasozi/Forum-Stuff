@@ -20,7 +20,7 @@ margin:2px 20px 2px 20px;
 #settings_menu ul li {
 margin-bottom:15px;
 padding:6px 6px 6px 25px;
-background:#fff url(skin/icons.png) no-repeat -13px -65px;
+background:#fff url(skin/icons.png) no-repeat -13px -61px;
 border:1px solid #fff;
 }
 #settings_menu ul li:hover,#settings_menu ul li.active{

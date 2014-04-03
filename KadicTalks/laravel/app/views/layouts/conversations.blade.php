@@ -21,9 +21,8 @@
         <?php
         //GET THE NAME OF THE LAST USER AND THE TIME FROM THE LAST POST
         //first organise model in descending order
-        Post::orderBy('created_at', 'desc');
-        //get the first row
-        $post = Post::where('conversation_id', '=', $conversation->id)->first();
+        //then get the first row
+        $post = Post::orderBy('created_at', 'desc')->where('conversation_id', '=', $conversation->id)->first();
         //find the user with the corresponding user_id
         $user = User::find($post->user_id);
         //get the name of the user

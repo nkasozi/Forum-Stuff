@@ -24,6 +24,32 @@ class UserTableSeeder extends Seeder
             'created_at' => $now,
             'updated_at' => $now
         ));
+        
+        User::create(array(
+            'email' => 'Peter@KadicBlahBlahBlah.com',
+            'username' => 'peter',
+            'password' => Hash::make('peter'),
+            'account_type' => 'Administrator',
+            'Location' => 'kampala',
+            'about_me' => 'Imagine me',
+            'name_of_pic'=>'guest.png',
+            'status' => 'active',
+            'created_at' => $now,
+            'updated_at' => $now
+        ));
+        
+        User::create(array(
+            'email' => 'Dr.Emma@KadicBlahBlah.com',
+            'username' => 'emma',
+            'password' => Hash::make('emma'),
+            'account_type' => 'Administrator',
+            'Location' => 'kampala',
+            'about_me' => 'Imagine me',
+            'name_of_pic'=>'guest.png',
+            'status' => 'active',
+            'created_at' => $now,
+            'updated_at' => $now
+        ));
     }
 
 }
