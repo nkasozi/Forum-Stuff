@@ -1,10 +1,10 @@
 <html>
   <head>
     <title>Kadic Hospital Forum</title>
-    <link href="/KadicTalks/css/styles.css" rel="stylesheet" media="screen">
-    <link href="/KadicTalks/css/administration.css" rel="stylesheet" media="screen">
-    <link href="/KadicTalks/css/profile.css" rel="stylesheet" media="screen">
-    <link href="/KadicTalks/css/button_switch.css" rel="stylesheet" media="screen">
+    <link href="css/styles.css" rel="stylesheet" media="screen">
+    <link href="css/administration.css" rel="stylesheet" media="screen">
+    <link href="css/profile.css" rel="stylesheet" media="screen">
+    <link href="css/button_switch.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <div id="content_wrapper">
@@ -18,7 +18,7 @@
 
 
               @if(Auth::check())
-              <li><img height="20" width="20"src="/KadicTalks/images/{{Auth::user()->name_of_pic===''?'guest.png':Auth::user()->name_of_pic}}"/></li>                  
+              <li><img height="20" width="20"src="images/{{Auth::user()->name_of_pic===''?'guest.png':Auth::user()->name_of_pic}}"/></li>                  
               <li>{{ link_to('conversations', 'Home', $attributes = array(), $secure = null);}}</li>
               <li>{{ link_to('profile?id='.Auth::user()->id, Auth::user()->username, $attributes = array(), $secure = null) }}</li>            
               <li>{{ link_to('settings?id='.Auth::user()->id, 'Settings', $attributes = array(), $secure = null) }}</li>

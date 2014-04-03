@@ -20,7 +20,7 @@
   <div id="settings_wrapper">
     <div class="row">
 
-      {{ Form::open(array('url'=>'settings/password')) }}
+      {{ Form::open(array('url'=>'change_password')) }}
 
       <!-- old password field -->
       <div class="col">

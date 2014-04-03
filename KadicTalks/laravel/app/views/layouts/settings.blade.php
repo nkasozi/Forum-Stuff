@@ -8,7 +8,7 @@
     <div id="nav">
       <ul>
         <li>{{link_to('#', 'Settings', $attributes = array('class'=>'active'), $secure = null) }}</li>
-        <li>{{ link_to('settings/password?id='.Auth::user()->id, 'Change Password or Email', $attributes = array(), $secure = null) }}</li>
+        <li>{{ link_to('change_password?id='.Auth::user()->id, 'Change Password or Email', $attributes = array(), $secure = null) }}</li>
       </ul>
     </div>
   </div>
@@ -31,7 +31,7 @@
 
         <div class="settings_category_right">
           <div class="wrapper">
-            <img src="/KadicTalks/images/{{Auth::user()->name_of_pic}}"/>
+            <img src="images/{{Auth::user()->name_of_pic}}"/>
             <ul>
               {{ Form::file('image',array('id'=>'save_changes')) }}
             </ul>

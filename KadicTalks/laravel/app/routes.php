@@ -84,10 +84,10 @@ Route::get('settings', array('uses' => 'UserController@GetAUsersSettings', 'as' 
 Route::post('settings', 'UserController@TryToUpdateUserProfile')->before('auth');
 
 //THIS IS A POST REQUEST BY USER TO SAVE SETTINGS 
-Route::get('settings/password', array('uses' => 'UserController@showChangePasswordOrEmailView', 'as' => 'settings/password'))->before('auth');
+Route::get('change_password', array('uses' => 'UserController@showChangePasswordOrEmailView', 'as' => 'settings/password'))->before('auth');
 
 //THIS IS A POST REQUEST BY USER TO SAVE SETTINGS 
-Route::post('settings/password', 'UserController@TryToUpdateEmailOrPassword')->before('auth');
+Route::post('change_password', 'UserController@TryToUpdateEmailOrPassword')->before('auth');
 
 //THIS IS A REQUEST TO VIEW THE ADMINISTRATION PANEL
 Route::get('admin', array('uses' => 'AdminController@GetNewConversationView', 'as' => 'admin'))->before('auth');

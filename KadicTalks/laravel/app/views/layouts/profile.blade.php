@@ -90,7 +90,7 @@
 
         <div class="settings_category_right">
           <ul>
-            {{ Form::label($user->location) }}
+            {{ Form::label($user->Location) }}
           </ul>
         </div>
       </div>

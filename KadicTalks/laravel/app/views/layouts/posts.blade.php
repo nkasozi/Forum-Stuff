@@ -80,7 +80,7 @@
     <div class="profile_row_container">
       <div class="profile_pic"> 
         <!--Profile pic -->
-        <img src="/KadicTalks/images/guest.png"/>
+        <img src="images/guest.png"/>
       </div>
       <!--comment/post of the profile -->
       <div class="profile_comment">

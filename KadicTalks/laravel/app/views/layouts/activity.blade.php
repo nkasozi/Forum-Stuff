@@ -21,7 +21,7 @@
   <div class="profile_row_container">
     <div class="profile_pic"> 
       <!--Profile pic -->
-      <img src='/KadicTalks/images/{{$user->name_of_pic}}'/>
+      <img src='images/{{$user->name_of_pic}}'/>
     </div>
     <!--comment/post of the profile -->
     <div class="profile_comment">
