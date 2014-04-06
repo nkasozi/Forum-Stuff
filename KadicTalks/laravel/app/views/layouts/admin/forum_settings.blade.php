@@ -42,7 +42,7 @@
             <?php
             $title               = Setting::where('name', '=', 'forum_title')->first();
             ?>
-            {{ Form::text('forum_title',$title->value,array('required')) }}
+            {{ Form::text('forum_title',$title->value,array('placeholder'=>'Leave Blank For Default Value')) }}
           </ul>
         </div>
       </div>

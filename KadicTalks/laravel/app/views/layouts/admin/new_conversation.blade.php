@@ -70,31 +70,23 @@
           </h4>
         </div>
 
-        <div class="content_row">
-          <div class="profile_row_container">
-            <div class="post_comment" >
-              <div class="post_comment_header">
+        <div class="settings_category_right" style="width: 500px;">
 
-              </div>
+          <!--comment/post of the profile -->
+          <div class="post_comment_body" >
+            <ul>
+              {{ Form::textArea('post','',array('id'=>'summernote','placeholder'=>'Explain what this conversation is about')) }}
+            </ul>
 
-              <!--comment/post of the profile -->
-              <div class="post_comment_body">
-                <ul>
-                  {{ Form::textArea('post','',array('id'=>'summernote','placeholder'=>'Explain what this conversation is about')) }}
-                </ul>
+          </div>
+          <div class="post_comment_footer">
+            <ul>
+            <li >{{Form::file('attachment')}}
+             {{ Form::submit('Post',array('id'=>'save_changes','onclick'=>'return this.form.submit')) }}</li>
+            </ul>
 
-              </div>
-              <div class="post_comment_footer">
-
-                <p class="attach_file">{{Form::file('attachment')}}</p>
-
-                <ul>
-                  <!-- submit button -->
-                  <li> {{ Form::submit('Post',array('id'=>'submit','onclick'=>'return this.form.submit')) }}</li>
-                </ul>
-
-              </div>
-              <script type="text/javascript">
+          </div>
+          <script type="text/javascript">
 
 $(document).ready(function() {
 
@@ -107,20 +99,21 @@ $(document).ready(function() {
       ['insert', ['link']]
     ],
     height: "300px",
-    width: "400px",
     focus: true
   });
 });
 var postForm = function() {
   var content = $('textarea[name="post"]').html($('#summernote').code());
 }
-              </script>
-              {{ Form::close() }}
-            </div>
-          </div>
+          </script>       
         </div>
       </div>
+      <!-- submit button -->
+      <div class="settings_category_right" style='float:right;margin-left: 2em;'> </div>
+
+      {{ Form::close() }}
     </div>
   </div>
 </div>
+
 @stop

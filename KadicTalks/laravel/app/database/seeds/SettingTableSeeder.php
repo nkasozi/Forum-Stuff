@@ -17,7 +17,7 @@ class SettingTableSeeder extends Seeder
 
     Setting::create(array(
         'name'       => 'forum_title',
-        'value'      => 'Kadic Talks',
+        'value'      => 'KadicTalks',
         'created_at' => $now,
         'updated_at' => $now
     ));

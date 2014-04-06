@@ -129,7 +129,7 @@ class UserController extends BaseController
     Auth::logout();
 
     //take user to login page and display sucess message
-    return Redirect::route('conversations')->with('flash_notice', 'You are successfully logged out.');
+    return Redirect::route('home');
   }
 
   //THIS ATTEMPTS TO CREATE A NEW USER BASED ON PROVIDED INFO OR FAILS WITH ERRORS

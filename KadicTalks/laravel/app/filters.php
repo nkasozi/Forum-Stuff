@@ -54,7 +54,7 @@ Route::filter('admin', function()
     }
     if (!((Auth::user()->account_type) === 'Administrator'))
     {
-        return Redirect::route('conversations')->with('flash_notice','Seriously session hijacking...thats so yesterday!! Try Harder');
+        return Redirect::route('conversations')->withErrors('Got U SUCKER...u get to roll that die 2 more times and then u are out!!');
     }
 });
 

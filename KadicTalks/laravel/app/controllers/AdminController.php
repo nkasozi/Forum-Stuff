@@ -115,13 +115,6 @@ class AdminController extends BaseController
   //ATTEMPTS TO SAVE CHANGES IN THE FORUM SETTINGS
   public function TryToChangeForumSettings()
   {
-    //check if user is an admin
-    //got u suckers
-    if (!$this->IsAnAdmin())
-    {
-      return Redirect::route('conversations')->withErrors('Sorry But you are not an admin hence cant do this');
-    }
-
     //get user input
     $appearance          = Input::get('appearance');
     $forum_title         = Input::get('forum_title');
@@ -135,7 +128,6 @@ class AdminController extends BaseController
     //data to validate
     $data = array(
         'appearance'          => $appearance,
-        'title'               => $forum_title,
         'payment_duration'    => $payment_duration,
         'approval'            => $approval,
         'send_email'          => $send_email,
@@ -146,7 +138,6 @@ class AdminController extends BaseController
     //validation rules
     $rules = array(
         'appearance'          => 'required',
-        'title'               => 'required',
         'payment_duration'    => 'required|Integer',
         'approval'            => 'required',
         'send_email'          => 'required',

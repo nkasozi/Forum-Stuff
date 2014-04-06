@@ -1,26 +1,38 @@
 <html>
   <head>
+
     <title>Kadic Hospital Forum</title>
+
     <link href="css/styles.css" rel="stylesheet" media="screen">
     <link href="css/administration.css" rel="stylesheet" media="screen">
     <link href="css/profile.css" rel="stylesheet" media="screen">
     <link href="css/button_switch.css" rel="stylesheet" media="screen">
     <link href="css/home_styles.css" rel="stylesheet" media="screen">
-   
+
   </head>
   <body>
     <div id="content_wrapper">
       <div id='header_styling'>
+
         <div id="header">
+
           <div id="logo">
+            <?php
+            $forum_title_setting = Setting::where('name', '=', 'forum_title')->first();
+            $forum_title         = $forum_title_setting->value;
+            ?>
+            @if($forum_title==='')
             <h1>Kadic<span id="talks">TalkS</span></h1>
+            @else
+            <h1><span >{{$forum_title}}</span></h1>
+            @endif
           </div>
+
           <div id="header_navigation">
             <ul>
 
-
               @if(Auth::check())
-              <li><img height="20" width="20"src="images/{{Auth::user()->name_of_pic===''?'guest.png':Auth::user()->name_of_pic}}"/></li>                  
+              <li><img height="20" width="20" src="images/{{Auth::user()->name_of_pic===''?'guest.png':Auth::user()->name_of_pic}}"/></li>                  
               <li>{{ link_to('conversations', 'Home', $attributes = array(), $secure = null);}}</li>
               <li>{{ link_to('profile?id='.Auth::user()->id, Auth::user()->username, $attributes = array(), $secure = null) }}</li>            
               <li>{{ link_to('settings?id='.Auth::user()->id, 'Settings', $attributes = array(), $secure = null) }}</li>
@@ -34,7 +46,7 @@
               <li>{{ link_to('login', 'Login', $attributes = array(), $secure = null)}}</li>
               <?php
               //get the registration setting
-              $sign_up_setting = Setting::where('name', '=', 'registration')->first();
+              $sign_up_setting     = Setting::where('name', '=', 'registration')->first();
 
               $sign_up_allowed = ($sign_up_setting->value) === 'Yes' ? TRUE : FALSE;
               ?>
@@ -44,7 +56,9 @@
               @endif
             </ul>
           </div>
+
         </div>
+
       </div>
 
       <!-- check for flash notification message -->
@@ -70,12 +84,13 @@
       @yield('content')
 
       <div id="footer">
+
         <div id="nav">
           <ul>
             <li><a href="#">Go to top</a></li>
-            <li><a href="#">{{Post::all()->count()}} Posts</a></li>
-            <li><a href="#">{{Conversation::all()->count()}} Conversations</a></li>
-            <li><a href="#">{{User::all()->count()}} Members</a></li>
+            <li><a href="conversations">{{Post::all()->count()}} Posts</a></li>
+            <li><a href="conversations">{{Conversation::all()->count()}} Conversations</a></li>
+            <li><a href="conversations">{{User::all()->count()}} Members</a></li>
           </ul>
         </div>
 

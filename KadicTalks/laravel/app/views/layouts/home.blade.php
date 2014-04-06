@@ -28,7 +28,7 @@
         <div class="billboard">
           <div id="home_header">
             <footer>
-              <a href="" class="button style2 scrolly scrolly-centered" id="start">Doctor? Lets talk</a>
+              <a href="" class="button style2 scrolly scrolly-centered" id="start">Doctor? We need to talk</a>
             </footer>
           </div>
           <div id="home_footer">
@@ -37,7 +37,6 @@
               <li><a href="#" class="fa fa-twitter solo"><span>Twitter</span></a></li>
               <li><a href="#" class="fa fa-google-plus solo"><span>Google+</span></a></li>
               <li><a href="#" class="fa fa-pinterest solo"><span>Pinterest</span></a></li>
-              <li><a href="#" class="fa fa-dribbble solo"><span>Dribbble</span></a></li>
               <li><a href="#" class="fa fa-linkedin solo"><span>LinkedIn</span></a></li>
             </ul>
           </div>
@@ -57,9 +56,9 @@
 
             </div>
             <div id="conversation_search">
-              <form action="" method="">
+              <form action="search_conversations" method="post">
                 <fieldset>
-                  <input type="text" name="" value="" placeholder='Search conversations...'/>
+                  <input type="text" name="search_term" placeholder='Search conversations...'/>
                 </fieldset>
               </form>
             </div>
@@ -109,15 +108,6 @@
         @endif
       </div>
 
-
-      <div id="footer">
-        <div id="nav">
-
-        </div>
-        <div id="developer">
-
-        </div>
-      </div>
     </div>
   </body>
 </html>
