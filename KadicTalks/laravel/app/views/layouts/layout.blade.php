@@ -5,6 +5,8 @@
     <link href="css/administration.css" rel="stylesheet" media="screen">
     <link href="css/profile.css" rel="stylesheet" media="screen">
     <link href="css/button_switch.css" rel="stylesheet" media="screen">
+    <link href="css/home_styles.css" rel="stylesheet" media="screen">
+   
   </head>
   <body>
     <div id="content_wrapper">
@@ -30,7 +32,15 @@
               @else    
               <li>{{ link_to('conversations', 'Home', $attributes = array(), $secure = null);}}</li>
               <li>{{ link_to('login', 'Login', $attributes = array(), $secure = null)}}</li>
+              <?php
+              //get the registration setting
+              $sign_up_setting = Setting::where('name', '=', 'registration')->first();
+
+              $sign_up_allowed = ($sign_up_setting->value) === 'Yes' ? TRUE : FALSE;
+              ?>
+              @if($sign_up_allowed)
               <li>{{ link_to('register', 'Sign Up', $attributes = array(), $secure = null)}}</li>
+              @endif
               @endif
             </ul>
           </div>

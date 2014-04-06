@@ -50,11 +50,11 @@ Route::filter('admin', function()
 {
     if (Auth::guest())
     {
-        return Redirect::guest('login');
+        return Redirect::route('login');
     }
     if (!((Auth::user()->account_type) === 'Administrator'))
     {
-        return Redirect::route('home');
+        return Redirect::route('conversations')->with('flash_notice','Seriously session hijacking...thats so yesterday!! Try Harder');
     }
 });
 

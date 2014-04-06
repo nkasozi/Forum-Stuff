@@ -8,11 +8,6 @@
     </div> 
     <div class="form">
 
-      <!-- check for login error flash var -->
-      @if (Session::has('flash_error'))
-      <div id="flash_error">{{ Session::get('flash_error') }}</div>
-      @endif
-
       {{ Form::open(array('url'=>'register')) }}
 
 
@@ -21,19 +16,19 @@
         <!-- username field -->
         <li>
           {{ Form::label('username', 'Username') }}
-          {{ Form::text('username', Input::old('username'),array('required'=>'true')) }}
+          {{ Form::text('username', '',array('placeholder'=>'Enter a creative username','required'=>'true')) }}
         </li>
 
         <!-- email field -->
         <li>
           {{ Form::label('email', 'Email') }}
-          {{ Form::text('email', Input::old('email'),array('required'=>'true')) }}
+          {{ Form::text('email', '',array('placeholder'=>'Enter your email','required'=>'true')) }}
         </li>
         
          <!-- Full name field -->
         <li>
           {{ Form::label('name', 'Full Name') }}
-          {{ Form::text('name', Input::old('name'),array('required'=>'true')) }}
+          {{ Form::text('name','',array('placeholder'=>'Enter your full name','required'=>'true')) }}
         </li>
         
          <!-- Speciality field -->
@@ -45,32 +40,32 @@
          <!-- current hospital field -->
         <li>
           {{ Form::label('hospital', 'Current Hospital') }}
-          {{ Form::text('hospital', Input::old('hospital'),array('required'=>'true')) }}
+          {{ Form::text('hospital','',array('placeholder'=>'Enter name of your current hospital','required'=>'true')) }}
         </li>
         
         <!-- location field -->
         <li>
           {{ Form::label('location', 'Hospital Location') }}
-          {{ Form::text('location', Input::old('location'),array('required'=>'true')) }}
+          {{ Form::text('location', '',array('placeholder'=>'Enter location of your current hospital','required'=>'true')) }}
         </li>
         
          <!-- Gender field -->
         <li>
           {{ Form::label('gender', 'Gender') }}
-          {{ Form::select('gender',array('Male'=>'Male','Female'=>'Female')) }}
+          {{ Form::select('gender',array('Male'=>'Male','Female'=>'Female'),'',array('style'=>'padding-right:5px;')) }}
         </li>
 
 
         <!-- password field -->
         <li>
           {{ Form::label('password', 'Password') }}
-          {{ Form::password('password',array('required'=>'true')) }}
+          {{ Form::password('password',array('placeholder'=>'Password should be atleast 6 characters ','required'=>'true')) }}
         </li>
 
         <!-- confirm password field -->
         <li>
           {{ Form::label('confirmed_password','Confirm Password') }}
-          {{ Form::password('confirmed_password',array('required'=>'true')) }}
+          {{ Form::password('confirmed_password',array('placeholder'=>'Renter your password','required'=>'true')) }}
         </li>
 
         <!-- submit button -->

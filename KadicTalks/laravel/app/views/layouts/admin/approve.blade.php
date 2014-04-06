@@ -7,6 +7,10 @@
     <div class="row">
       <div class="col">
         <h4>Members to Approve</h4>
+        <?php
+        $approval_setting = Setting::where('name', '=', 'approval')->first();
+        ?>
+        @if(($approval_setting->value) === 'Yes')
         @if(count($users)>0)
         @for($i=0;$i<count($users);$i++)
           {{Form::open(array('url'=>'approve?id='.$users[$i]->id))}}
@@ -31,7 +35,10 @@
           @else
           <p> No Members To Approve Today</p>
           @endif
-
+          @else
+          <p>You have Turned Off The Approval Setting</p>
+          @endif
+          
       </div>
     </div>
   </div>

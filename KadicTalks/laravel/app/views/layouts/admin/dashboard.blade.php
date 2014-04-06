@@ -1,13 +1,15 @@
 @extends('layouts.admin.index')
 @section('content')
 @parent
+
 <div id="settings_content">
   <div id="dashboard_content">
     <div class="row">
       <div class="col">
         <h4>Forum Statistics</h4>
-
+       
         @for($i=0;$i<count($statistics);$i++)
+         
           <!-- old password field -->
           <div class="col">
             <div class="settings_category_left">
@@ -35,7 +37,7 @@
 
             <div class="settings_category_right">
               <p>
-                {{ Form::label('label',$statistics[$i]) }}
+                {{ $statistics[$i] }}
               <p>
             </div>
           </div>

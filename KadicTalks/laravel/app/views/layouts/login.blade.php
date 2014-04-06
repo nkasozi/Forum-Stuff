@@ -16,7 +16,7 @@
       <ul>
         <li>
           {{ Form::label('username', 'Username') }}
-          {{ Form::text('username', Input::old('username'),array('required'=>'true','placeholder'=>'Username or Email')) }}
+          {{ Form::text('username', Input::old('username'),array('required'=>'true','placeholder'=>'Enter Username')) }}
         </li>
 
         <!-- password field -->

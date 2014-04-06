@@ -74,8 +74,7 @@
         </div>
         <div class="settings_category_right">
           <ul>
-            <?php $speciality_obj=Speciality::find(($user->speciality)+1);?>
-            {{ Form::label($speciality_obj->speciality) }}
+            {{ Form::label($user->speciality) }}
           </ul>
         </div>
       </div>
@@ -84,7 +83,7 @@
       <div class="col">
         <div class="settings_category_left">
           <h4>
-            {{ Form::label('location', 'Location') }}
+            {{ Form::label('location', 'Location of hospital') }}
           </h4>
         </div>
 

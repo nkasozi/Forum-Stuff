@@ -11,28 +11,115 @@ class UserController extends BaseController
         'username' => Input::get('username'),
         'password' => Input::get('password')
     );
+
+    //if log in was sucessfull
     if (Auth::attempt($user))
     {
-      //if user has not yet been approved by admin
-      if ((Auth::user()->status) === 'inactive')
+      //get approval setting
+      $approval_setting            = Setting::where('name', '=', 'approval')->first();
+      $email_confirmation_setting  = Setting::where('name', '=', 'send_email')->first();
+      $payment_duration_setting= Setting::where('name', '=', 'payment_duration')->first();
+      $approval_required           = ($approval_setting->value) === 'Yes' ? TRUE : FALSE;
+      $email_confirmation_required = ($email_confirmation_setting->value) === 'Yes' ? TRUE : FALSE;
+      $payment_duration=$payment_duration_setting->value;
+      $user_status                 = Auth::user()->status;
+
+      //if user has not yet been approved by admin and the admin must first approve
+      if ($approval_required && $user_status === 'awaiting approval')
       {
         //log him out
         Auth::logout();
 
         //redirect with sorry message
-        return Redirect::route('login')
-            ->withErrors('Sorry but your account has not yet been approved.Try again later')
-            ->withInput();
+        return Redirect::route('login')->withErrors('Sorry but your account has not yet been approved.Try again later')->withInput();
       }
-      //authentication sucess! take him to see posts from account
-      //noftify him too
-      return Redirect::route('conversations');
+
+      //if email confirmation is required and the user has not yet confirmed
+      else if ($email_confirmation_required && $user_status === 'awaiting_confirmation')
+      {
+        //log him out
+        Auth::logout();
+
+        //redirect with sorry message
+        return Redirect::route('login')->withErrors('Sorry but your email has not yet been confirmed.Check Your Email for a confirmation link')->withInput();
+      }
+
+      //if user is currently suspended or banned
+      else if ($user_status === 'suspended')
+      {
+        //get the suspension duration setting
+        $suspension_duration_setting = Setting::where('name', '=', 'suspension_duration')->first();
+
+        //get the duration of a suspension
+        $suspension_duration = $suspension_duration_setting->value;
+
+        //get the date the suspension started(date of last update of user row)
+        $updated_at = Auth::user()->updated_at;
+
+        //get the days that have elapsed since then
+        $days_elapsed = Utilities::GetDaysGoneBy($updated_at);
+
+        echo 'days_elapsed=' . $days_elapsed;
+
+        //if the days elapsed since then are greater than the duration of the suspension
+        if ($days_elapsed >= ($suspension_duration))
+        {
+          //change users status to active
+          Auth::user()->status = 'active';
+
+          //save change
+          Auth::user()->save();
+
+          //log user in
+          return Redirect::route('conversations');
+        }
+
+        //suspension days are not yet finished
+        else
+        {
+          //log him out
+          Auth::logout();
+
+          //redirect with sorry message
+          return Redirect::route('login')->withErrors('Sorry but your account has been suspended.Try again after ' . $suspension_duration . ' days')->withInput();
+        }
+      }
+      
+      //the users free period is done.time to pay up sucker
+      else if (Utilities::GetYearsGoneBy(Auth::user()->created_at) >= $payment_duration)
+      {
+          //log him out
+          Auth::logout();
+
+          //redirect with sorry message
+          return Redirect::route('login')->withErrors('Sorry but your days of free access are done.pliz proceed here and pay up sucker');
+       
+      }
+      
+      //else authentication sucess! take him to see conversations from account
+      else
+      {
+        //if email confirmation and admin approval are turned off but user status is not active 
+        if (!($user_status === 'active'))
+        {
+          //change users status to active
+          Auth::user()->status = 'active';
+
+          //save changes
+          Auth::user()->save();
+        }
+
+        //noftify him too
+        return Redirect::route('conversations');
+      }
     }
-    // authentication failure! lets go back to the login page
-    // with the users original input
-    return Redirect::route('login')
-        ->withErrors('Your username/password combination was incorrect.')
-        ->withInput();
+
+    // else authentication failure! lets go back to the login page
+    else
+    {
+      // with the users original input
+      return Redirect::route('login')->withErrors('Your username/password combination was incorrect.')->withInput();
+    }
   }
 
   //THIS LOGS A USER OUT AND TERMINATES HIS SESSION
@@ -42,8 +129,7 @@ class UserController extends BaseController
     Auth::logout();
 
     //take user to login page and display sucess message
-    return Redirect::route('conversations')
-        ->with('flash_notice', 'You are successfully logged out.');
+    return Redirect::route('conversations')->with('flash_notice', 'You are successfully logged out.');
   }
 
   //THIS ATTEMPTS TO CREATE A NEW USER BASED ON PROVIDED INFO OR FAILS WITH ERRORS
@@ -94,14 +180,15 @@ class UserController extends BaseController
     //if validation fails
     if ($validator->fails())
     {
-
+      //take user back to registration page with error messages
       return Redirect::route('register')->withInput()->withErrors($validator);
     }
 
     //create new user in database
-    $now                    = date('Y-m-d H:i:s');
-    $user                   = new User;
-    $user->username         = $username;
+    $now            = date('Y-m-d H:i:s');
+    $user           = new User;
+    $user->username = $username;
+
     //hash user password
     $user->password         = Hash::make($password);
     $user->email            = $email;
@@ -111,7 +198,7 @@ class UserController extends BaseController
     $user->about_me         = '';
     $user->full_name        = $full_name;
     $user->current_hospital = $hospital;
-    $user->speciality       = $Speciality + 1; //add 1 becoz the array of specialities on the register page starts from 0
+    $user->speciality       = $Speciality; //add 1 becoz the array of specialities on the register page starts from 0
     $user->gender           = $gender;
     $user->name_of_pic      = 'guest.png';
     $user->created_at       = $now;
@@ -121,19 +208,56 @@ class UserController extends BaseController
     //authenticate user
     Auth::login($user);
 
-    //if user has not yet been approved by admin
-    if ((Auth::user()->status) === 'inactive')
+    //get approval setting
+    $approval_required   = Setting::where('name', '=', 'approval')->first();
+    $send_email_required = Setting::where('name', '=', 'send_email')->first();
+
+    //if  approval by admin is needed
+    if ((($approval_required->value) === 'Yes'))
     {
+      //change user status
+      Auth::user()->status = 'awaiting_approval';
+
+      //save changes
+      Auth::user()->save();
+
       //log him out
       Auth::logout();
 
       //redirect with sorry message
-      return Redirect::route('login')
-          ->with('flash_notice', 'Sucess!! Your new account is awaiting approval by an admin.Try again later');
+      return Redirect::route('login')->with('flash_notice', 'Sucess!! Your new account is awaiting approval by an admin.Try again later');
     }
 
-    //create sign up page
-    return Redirect::route('conversations')->with('flash_notice', 'You have sucessfully logged in');
+    //if sending a confirmation email is necessary
+    else if (($send_email_required->value) === 'Yes')
+    {
+      //send user a confirmation email
+      Utilities::SendConfirmationEmail(Auth::user());
+
+      //change user status
+      Auth::user()->status = 'awaiting_confirmation';
+
+      //save changes
+      Auth::user()->save();
+
+      //log him out
+      Auth::logout();
+
+      return Redirect::route('login')->with('flash_notice', 'You Need to Confirm your email first before logging in.Check Your email for a confirmation link');
+    }
+
+    //if admin approval is not required and email confirmation is not required
+    else
+    {
+      //change users status to active
+      Auth::user()->status = 'active';
+
+      //save changes
+      Auth::user()->save();
+
+      //take user to conversations page
+      return Redirect::route('conversations')->with('flash_notice', 'You have sucessfully logged in for the first time');
+    }
   }
 
   public function Test()
@@ -235,20 +359,10 @@ class UserController extends BaseController
 
     foreach ($all_specialities as $speciality)
     {
-      array_push($specialities, $speciality->speciality);
-    }
-
-
-
-    $speciality = Speciality::find(($user->speciality) + 1);
-
-
-    if (count($speciality) > 0)
-    {
-      $value = $speciality->id;
+      $specialities[$speciality->speciality] = $speciality->speciality;
     }
     //create his settings page
-    return View::make('layouts.settings')->with('user', $user)->with('time_elapsed', $time_elapsed)->with('specialities', $specialities)->with('value', $value);
+    return View::make('layouts.settings')->with('user', $user)->with('time_elapsed', $time_elapsed)->with('specialities', $specialities);
   }
 
   //THIS RETURNS A VIEW WITH ALL POSTS IN A GIVEN CONVERSATIO
@@ -262,6 +376,8 @@ class UserController extends BaseController
 
     //get all the posts in the conversation
     $posts = Post::where('conversation_id', '=', $conversation_id)->get();
+
+
 
     //for each post get the user id
     //use the id to get the user from the user table
@@ -280,10 +396,8 @@ class UserController extends BaseController
         continue;
       }
 
-      //echo $user;
       array_push($users, $user);
     }
-    //echo 'stopping here';
     //create a view with all the posts
     return View::make('layouts.posts')->with('posts', $posts)->with('id', $conversation_id)->with('users', $users);
   }
@@ -292,8 +406,6 @@ class UserController extends BaseController
   public function TryToPostToConversation()
   {
     $post = new Post;
-
-
 
     //get user input
     $reply = Input::get('reply');
@@ -323,6 +435,12 @@ class UserController extends BaseController
     $post->updated_at      = $now;
     $post->save();
 
+    //update user last active coloum
+    Auth::user()->updated_at = $now;
+
+    //save changes
+    Auth::user()->save();
+
     //reload all the posts in the conversation
     $posts = Post::where('conversation_id', '=', $conversation_id)->get();
 
@@ -333,6 +451,7 @@ class UserController extends BaseController
       $user_id = $post->user_id;
 
       $user = User::find($user_id);
+
       //if no user found
       if ($user == null)
       {
@@ -527,6 +646,7 @@ class UserController extends BaseController
     return Redirect::back()->with('flash_notice', 'Details Saved');
   }
 
+  //THIS IS SETS A USERS ACCOUNT STATUS TO ACTIVE
   public function ConfirmUserAccount()
   {
     //get id of user whose profile they want
@@ -558,7 +678,11 @@ class UserController extends BaseController
 
     if ($user != NULL)
     {
+      //change user status
       $user->status = 'active';
+
+      //save changes in database
+      $user->save();
     }
 
     return View::make('layouts.login')->with('flash_notice', 'Welcome,Login to get started');
@@ -617,21 +741,6 @@ class UserController extends BaseController
     }
 
     return View::make('layouts.activity')->with('user', $user)->with('time_elapsed', $time_elapsed)->with('posts', $posts);
-  }
-
-  public function GetTotalNumOfPosts()
-  {
-    return Post::all()->count();
-  }
-
-  public function GetTotalNumOfConversations()
-  {
-    return Conversation::all()->count();
-  }
-
-  public function GetTotalNumOfMembers()
-  {
-    return User::all()->count();
   }
 
   //FINDS THE TIME ELAPSED FROM SPECIFIED DATE

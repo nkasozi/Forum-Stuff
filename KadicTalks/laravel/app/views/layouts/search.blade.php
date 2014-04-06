@@ -5,7 +5,9 @@
   <div class="content_row">
     <div class="content_row_container">
       <div id="nav">
+        
         @if(Request::is('posts')||Request::is('search_posts'))
+        @if(!($id!=NULL))
         <ul>
           <li id="menu_icon"><a href="#"></a></li>
           <li ><a href="conversations" id="active_nav">Conversations</a></li>
@@ -27,6 +29,7 @@
             <input type="text" name="search_term" placeholder='Search posts...'/>
           </fieldset>
         </form>
+        @endif
         @endif
       </div>
     </div>

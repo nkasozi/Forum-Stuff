@@ -33,7 +33,7 @@
           <div class="wrapper">
             <img src="images/{{Auth::user()->name_of_pic}}"/>
             <ul>
-              {{ Form::file('image',array('id'=>'save_changes')) }}
+              {{ Form::file('image',array('class'=>'attach_file')) }}
             </ul>
           </div>
         </div>
@@ -43,7 +43,7 @@
       <div class="col">
         <div class="settings_category_left">
           <h4>
-            {{ Form::label('location', 'Location') }}
+            {{ Form::label('location', 'Location of hospital') }}
           </h4>
         </div>
 

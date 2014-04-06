@@ -618,8 +618,73 @@ color:#fff;
 select
 {
 width:120px;
+}
+.profile_comment_header{
+width:100%;
+float:left;
+margin:0px;
 
 }
+.profile_comment_header ul {
+list-style-type: none;
+margin:2px;
+padding:0px;
+}
+.profile_comment_header ul li{
+float:left;
+padding:5px;
+font-size:14px;
+}
+.profile_comment_header ul li a{
+text-decoration:none;
+font-size:16px;
+color:#000;
+font-weight:600;
+}
+.profile_comment_header ul li a:hover{
+text-decoration:underline;
+}
+.profile_comment_body{
+width:100%;
+float:left;
+margin:0px;
+padding:0px;
+}
+.profile_comment_body p{
+font-size:14px;
+color:#646567;
+width:800;
+margin:0px;
+padding:0px 5px 0px 10px;
+}
+.profile_comment_attachment{
+width:100%;
+float:left;
+margin:0px;
+padding:0px;
+}
+.profile_comment_attachment ul{
+list-style-type: none;
+padding:0px;
+margin:0px;
+}
+.profile_comment_attachment ul li{
+float:left;
+padding:3px 5px 10px 5px;
+margin:0px;
+}
+.profile_comment_attachment ul li a{
+font-family: 'Open Sans';
+font-size:14px;
+padding-top:10px;
+color:#0cd80c;
+}
+.profile_comment_attachment ul li a img{
+width:20px;
+height:20px;
 
-
-
+}
+.profile_comment_attachment img{
+width:100px;
+height:100px;
+}

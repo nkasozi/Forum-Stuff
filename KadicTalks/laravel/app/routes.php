@@ -29,7 +29,7 @@ Route::get('/', array('as' => 'home', function ()
     $conversations = Conversation::all();
 
     //create view to display all conversations
-    return View::make('layouts.conversations')->with('conversations', $conversations);
+    return View::make('layouts.home')->with('conversations', $conversations);
   }));
 
 //THIS IS A GET REQUEST TO SEE THE LOGIN PAGE
@@ -67,7 +67,7 @@ Route::get('register', array('as' => 'register', function ()
     
     foreach ($all_specialities as $speciality)
     {
-      array_push($specialities, $speciality->speciality);
+      $specialities[$speciality->speciality]=$speciality->speciality;
     }
     
     //create sign up page
@@ -89,59 +89,64 @@ Route::get('change_password', array('uses' => 'UserController@showChangePassword
 //THIS IS A POST REQUEST BY USER TO SAVE SETTINGS 
 Route::post('change_password', 'UserController@TryToUpdateEmailOrPassword')->before('auth');
 
-//THIS IS A REQUEST TO VIEW THE ADMINISTRATION PANEL
-Route::get('admin', array('uses' => 'AdminController@GetNewConversationView', 'as' => 'admin'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN DASHBOARD PANEL CONTENT
-Route::get('dashboard', array('uses' => 'AdminController@GetForumStatistics', 'as' => 'dashboard'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN MEMBER PANEL CONTENT
-Route::get('users', array('uses' => 'AdminController@GetAllMembers', 'as' => 'users'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN NEW CONVERSATION PANEL CONTENT
-Route::get('new_conversation', array('uses' => 'AdminController@GetNewConversationView', 'as' => 'new_conversation'))->before('auth');
-
-//THIS IS REQUEST TO CREATE A NEW CONVERSATION
-Route::post('new_conversation', array('uses' => 'AdminController@TryToCreateANewConversation'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN FORUM SETTINGS PANEL CONTENT
-Route::get('forum_settings', array('uses' => 'AdminController@GetForumSettingsView', 'as' => 'forum_settings'))->before('auth');
-
-//THIS IS REQUEST TO SAVE CHANGES IN FORUM SETTINGS
-Route::post('forum_settings', array('uses' => 'AdminController@TryToChangeForumSettings'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
-Route::get('approve', array('uses' => 'AdminController@GetAllMembersToApprove', 'as' => 'approve'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
-Route::post('approve', array('uses' => 'AdminController@TryToApproveMember', 'as' => 'approve'))->before('auth');
-
-//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
-Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('auth');
-
-////THIS IS REQUEST TO DELETE A USER
-Route::get('delete', array('uses' => 'AdminController@DeleteMember', 'as' => 'delete'))->before('auth');
-
-///THIS IS REQUEST TO DELETE A USER
+///THIS IS TEST METHOD
 Route::get('test', array('uses' => 'UserController@Test', 'as' => 'test'));
 
-///THIS IS REQUEST TO DELETE A USER
+///THIS IS A REQUEST CONFIRM AN EMAIL ADDRESS NORMALLY SENT BY A CLICK OF LINK IN CONFIRMATION EMAIL
 Route::get('confirmation', array('uses' => 'UserController@ConfirmUserAccount', 'as' => 'confirmation'));
 
-///THIS IS REQUEST TO DELETE A USER
-Route::post('suspend', array('uses' => 'AdminController@TryToSuspendMember', 'as' => 'suspend'))->before('auth');
-
-///THIS IS REQUEST TO DELETE A USER
+///THIS IS POST REQUEST TO SEARCH THE CONVERSATIONS FOR A TERM
 Route::post('search_conversations', array('uses' => 'UserController@SearchConversations'));
 
-//THIS IS REQUEST TO DELETE A USER
+//THIS IS GET REQUEST TO SEARCH THE CONVERSATIONS FOR A TERM
 Route::get('search_conversations', array('uses' => 'UserController@SearchConversations', 'as' => 'search_conversations'));
 
-//THIS IS REQUEST TO DELETE A USER
+//THIS IS GET REQUEST TO SEARCH THE POSTS FOR A PARTICULAR TERM
 Route::get('search_posts', array('uses' => 'UserController@SearchPosts', 'as' => 'search_posts'));
 
-///THIS IS REQUEST TO DELETE A USER
+///THIS IS POST REQUEST TO SEARCH THE POSTS FOR A PARTICULAR TERM
 Route::post('search_posts', array('uses' => 'UserController@SearchPosts'));
 
-//THIS IS REQUEST TO DELETE A USER
-Route::get('delete_conversation', array('uses' => 'AdminController@DeleteConversation', 'as' => 'delete_conversation'))->before('auth');
+//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
+Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('admin');
+
+
+
+//THIS IS A REQUEST TO VIEW THE ADMINISTRATION PANEL
+Route::get('admin', array('uses' => 'AdminController@GetNewConversationView', 'as' => 'admin'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN DASHBOARD PANEL CONTENT
+Route::get('dashboard', array('uses' => 'AdminController@GetForumStatistics', 'as' => 'dashboard'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN MEMBER PANEL CONTENT
+Route::get('users', array('uses' => 'AdminController@GetAllMembers', 'as' => 'users'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN NEW CONVERSATION PANEL CONTENT
+Route::get('new_conversation', array('uses' => 'AdminController@GetNewConversationView', 'as' => 'new_conversation'))->before('admin');
+
+//THIS IS REQUEST TO CREATE A NEW CONVERSATION
+Route::post('new_conversation', array('uses' => 'AdminController@TryToCreateANewConversation'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN FORUM SETTINGS PANEL CONTENT
+Route::get('forum_settings', array('uses' => 'AdminController@GetForumSettingsView', 'as' => 'forum_settings'))->before('admin');
+
+//THIS IS REQUEST TO SAVE CHANGES IN FORUM SETTINGS
+Route::post('forum_settings', array('uses' => 'AdminController@TryToChangeForumSettings'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
+Route::get('approve', array('uses' => 'AdminController@GetAllMembersToApprove', 'as' => 'approve'))->before('admin');
+
+//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
+Route::post('approve', array('uses' => 'AdminController@TryToApproveMember', 'as' => 'approve'))->before('admin');
+
+////THIS IS A REQUEST TO DELETE A MEMBER
+Route::get('delete', array('uses' => 'AdminController@DeleteMember', 'as' => 'delete'))->before('admin');
+
+///THIS IS REQUEST TO SUSPEND A USER
+Route::post('suspend', array('uses' => 'AdminController@TryToSuspendMember', 'as' => 'suspend'))->before('admin');
+
+//THIS IS REQUEST TO DELETE A CONVERSATION
+Route::get('delete_conversation', array('uses' => 'AdminController@DeleteConversation', 'as' => 'delete_conversation'))->before('admin');
+
+//THIS IS REQUEST TO MAKE A USER AN ADMIN
+Route::post('make_admin', array('uses' => 'AdminController@MakeUserAdmin', 'as' => 'make_admin'))->before('admin');
