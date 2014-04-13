@@ -108,7 +108,7 @@ Route::get('search_posts', array('uses' => 'UserController@SearchPosts', 'as' =>
 Route::post('search_posts', array('uses' => 'UserController@SearchPosts'));
 
 //THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
-Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('admin');
+Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('auth');
 
 
 
