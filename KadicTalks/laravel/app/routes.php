@@ -107,9 +107,17 @@ Route::get('search_posts', array('uses' => 'UserController@SearchPosts', 'as' =>
 ///THIS IS POST REQUEST TO SEARCH THE POSTS FOR A PARTICULAR TERM
 Route::post('search_posts', array('uses' => 'UserController@SearchPosts'));
 
-//THIS IS REQUEST TO VIEW THE ADMIN APPROVE MEMBERS PANEL CONTENT
-Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('admin');
+//THIS IS REQUEST TO VIEW A MEMBERS ACTIVITIES
+Route::get('activity', array('uses' => 'UserController@GetAMembersActivities', 'as' => 'activity'))->before('auth');
 
+//THIS IS REQUEST TO VIEW A MEMBERS ACTIVITIES
+Route::get('edit', array('uses' => 'UserController@GetPostToEdit', 'as' => 'edit'))->before('auth');
+
+//THIS IS REQUEST TO VIEW A MEMBERS ACTIVITIES
+Route::post('edit', array('uses' => 'UserController@TryToEditPost'))->before('auth');
+
+//THIS IS REQUEST TO VIEW A MEMBERS ACTIVITIES
+Route::get('delete_post', array('uses' => 'UserController@DeletePost', 'as' => 'delete_post'))->before('auth');
 
 
 //THIS IS A REQUEST TO VIEW THE ADMINISTRATION PANEL

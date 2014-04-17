@@ -56,6 +56,13 @@ class SettingTableSeeder extends Seeder
         'created_at' => $now,
         'updated_at' => $now
     ));
+    
+    Setting::create(array(
+        'name'       => 'user_attachment',
+        'value'      => 'Yes',
+        'created_at' => $now,
+        'updated_at' => $now
+    ));
   }
 
 }

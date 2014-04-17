@@ -65,6 +65,24 @@
         </div>
       </div>
 
+      <!-- user attachment field  -->
+      <div class="col">
+        <div class="settings_category_left">
+          <h4>
+            {{ Form::label('user_attachment', 'Are normal users allowed to attach documents') }}
+          </h4>
+        </div>
+
+        <div class="settings_category_right">
+          <ul>
+            <?php
+            $attachment          = Setting::where('name', '=', 'user_attachment')->first();
+            ?>
+            {{ Form::select('user_attachment',array('Yes'=>'Yes','No'=>'No'),$attachment->value) }}
+          </ul>
+        </div>
+      </div>
+
       <!-- User Approval field  -->
       <div class="col">
         <div class="settings_category_left">

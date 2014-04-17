@@ -13,13 +13,13 @@
 
 App::before(function($request)
 {
-    //
+  //
 });
 
 
 App::after(function($request, $response)
 {
-    //
+  //
 });
 
 /*
@@ -35,27 +35,29 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-    if (Auth::guest())
-        return Redirect::guest('login');
+  if (Auth::guest())
+  {
+    return Redirect::route('home');
+  }
 });
 
 
 Route::filter('auth.basic', function()
 {
-    return Auth::basic();
+  return Auth::basic();
 });
 
 
 Route::filter('admin', function()
 {
-    if (Auth::guest())
-    {
-        return Redirect::route('login');
-    }
-    if (!((Auth::user()->account_type) === 'Administrator'))
-    {
-        return Redirect::route('conversations')->withErrors('Got U SUCKER...u get to roll that die 2 more times and then u are out!!');
-    }
+  if (Auth::guest())
+  {
+    return Redirect::route('home');
+  }
+  if (!((Auth::user()->account_type) === 'Administrator'))
+  {
+    return Redirect::route('conversations')->withErrors('Dear Session Hijacker...u get to roll that die 2 more times and then u are out!!');
+  }
 });
 
 
@@ -73,8 +75,8 @@ Route::filter('admin', function()
 
 Route::filter('guest', function()
 {
-    if (Auth::check())
-        return Redirect::to('/');
+  if (Auth::check())
+    return Redirect::to('/');
 });
 
 /*
@@ -90,8 +92,8 @@ Route::filter('guest', function()
 
 Route::filter('csrf', function()
 {
-    if (Session::token() != Input::get('_token'))
-    {
-        throw new Illuminate\Session\TokenMismatchException;
-    }
+  if (Session::token() != Input::get('_token'))
+  {
+    throw new Illuminate\Session\TokenMismatchException;
+  }
 });

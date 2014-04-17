@@ -16,7 +16,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('account_type');
             $table->string('Location');
-            $table->string('about_me');
+            $table->string('about_me')->nullable();
             $table->string('full_name');
             $table->string('speciality');
             $table->string('current_hospital');

@@ -649,12 +649,14 @@ width:100%;
 float:left;
 margin:0px;
 padding:0px;
+
 }
 .profile_comment_body p{
 font-size:14px;
 color:#646567;
 width:800;
 margin:0px;
+margin-bottom:5px;
 padding:0px 5px 0px 10px;
 }
 .profile_comment_attachment{
@@ -662,11 +664,14 @@ width:100%;
 float:left;
 margin:0px;
 padding:0px;
+
 }
 .profile_comment_attachment ul{
 list-style-type: none;
 padding:0px;
+padding-top:5px;
 margin:0px;
+border-top:1px dotted #aeacac;
 }
 .profile_comment_attachment ul li{
 float:left;

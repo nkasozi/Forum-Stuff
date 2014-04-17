@@ -1,5 +1,12 @@
 <?php
 
+
+//THIS CLASS IS A CONTROLLER FOR AN ADMIN AT KADICTALKS
+//IT WILL RESPOND TO ALL ACTIONS AN ADMIN CAN PERFORM AT KADIC TALKS
+//AN ADMIN CAN START NEW CONVERSATION
+//APPROVE NEW MEMBER
+//CHANGE FORUM SETTINGS
+//MAKE OTHER MEMBERS ADMIN ETC
 class AdminController extends BaseController
 {
 
@@ -24,13 +31,13 @@ class AdminController extends BaseController
 
     //get the number of new membersin the week
     $new_members_in_wk = $this->NumberOfNewMembersInWeek();
-    
+
     //get the total number of new conversations in the week
     $new_conversations_in_wk = $this->NumberOfNewConversationsInWeek();
 
     //get the total number of new posts in the week
     $new_posts_in_wk = $this->NumberOfNewPostsInWeek();
-    
+
     //create array for all the stats
     $statistics = array(
         0 => $number_of_members,
@@ -63,10 +70,10 @@ class AdminController extends BaseController
         array_push($new_members, $user);
       }
     }
-    
-    return ''.count($new_members);
+
+    return '' . count($new_members);
   }
-  
+
   //RETURNS THE NUMBER OF NEW CONVERSATIONS IN THE WEEK
   public function NumberOfNewConversationsInWeek()
   {
@@ -79,15 +86,15 @@ class AdminController extends BaseController
     //for each user determine if he created within the past week
     foreach ($conversations as $conversation)
     {
-     
+
       if ((Utilities::GetWeeksGoneBy($conversation->created_at)) <= 1)
       {
         array_push($new_conversations, $conversation);
       }
     }
-    
-    
-    return ''.count($new_conversations);
+
+
+    return '' . count($new_conversations);
   }
 
   //RETURNS THE NUMBER OF NEW POSTS IN THE WEEK
@@ -102,14 +109,14 @@ class AdminController extends BaseController
     //for each user determine if he created within the past week
     foreach ($posts as $post)
     {
-      
+
       if ((Utilities::GetWeeksGoneBy($post->created_at)) <= 1)
       {
         array_push($new_posts, $post);
       }
     }
-    
-    return ''.count($new_posts);
+
+    return '' . count($new_posts);
   }
 
   //ATTEMPTS TO SAVE CHANGES IN THE FORUM SETTINGS
@@ -124,6 +131,8 @@ class AdminController extends BaseController
     $send_email          = Input::get('send_email');
     $suspension_duration = Input::get('suspension_duration');
     $registration_status = Input::get('registration');
+    $user_attachments    = Input::get('user_attachment');
+
 
     //data to validate
     $data = array(
@@ -132,7 +141,8 @@ class AdminController extends BaseController
         'approval'            => $approval,
         'send_email'          => $send_email,
         'suspension_duration' => $suspension_duration,
-        'registration_status' => $registration_status
+        'registration_status' => $registration_status,
+        'user_attachment'     => $user_attachments
     );
 
     //validation rules
@@ -142,7 +152,8 @@ class AdminController extends BaseController
         'approval'            => 'required',
         'send_email'          => 'required',
         'suspension_duration' => 'required|Integer',
-        'registration_status' => 'required'
+        'registration_status' => 'required',
+        'user_attachment'     => 'required'
     );
 
     //validate the data
@@ -166,6 +177,16 @@ class AdminController extends BaseController
       //save appearance setting
       $appearance_model->save();
     }
+    else
+    {
+      //create new setting
+      $appearance_setting        = new Setting;
+      $appearance_setting->name  = 'appearance';
+      $appearance_setting->value = $appearance;
+      
+      //save it in database
+      $appearance_setting->save();
+    }
 
     //get forum title setting
     $title_model = Setting::where('name', '=', 'forum_title')->first();
@@ -177,6 +198,16 @@ class AdminController extends BaseController
 
       //save forum title
       $title_model->save();
+    }
+     else
+    {
+     //create new suspension setting
+      $forum_title_setting=new Setting;
+      $forum_title_setting->name='forum_title';
+      $forum_title_setting->value=$forum_title;
+      
+      //save in database
+      $forum_title_setting->save();
     }
 
     //get payment duration setting
@@ -190,6 +221,38 @@ class AdminController extends BaseController
       //save changes
       $payment_model->save();
     }
+     else
+    {
+     //create new setting
+      $payment_duration_setting=new Setting;
+      $payment_duration_setting->name='payment_duration';
+      $payment_duration_setting->value=$payment_duration;
+      
+      //save in database
+      $payment_duration_setting->save();
+    }
+
+    //get forum title setting
+    $user_attachments_model = Setting::where('name', '=', 'user_attachment')->first();
+
+    if ($user_attachments_model != NULL)
+    {
+      //update forum title
+      $user_attachments_model->value = $user_attachments;
+
+      //save forum title
+      $user_attachments_model->save();
+    }
+    else
+    {
+      //create a new setting
+      $user_attachments_setting        = new Setting;
+      $user_attachments_setting->name  = 'user_attachment';
+      $user_attachments_setting->value = $user_attachments;
+
+      //save it in database
+      $user_attachments_setting->save();
+    }
 
     //get approval setting
     $approval_model = Setting::where('name', '=', 'approval')->first();
@@ -201,6 +264,16 @@ class AdminController extends BaseController
 
       //save approval setting
       $approval_model->save();
+    }
+    else
+    {
+      //create new approval setting
+      $approval_setting        = new Setting;
+      $approval_setting->name  = 'approval';
+      $approval_setting->value = $approval;
+
+      //save in database
+      $approval_setting->save();
     }
 
 
@@ -228,6 +301,16 @@ class AdminController extends BaseController
       //save in database
       $suspension_model->save();
     }
+    else
+    {
+      //create new suspension setting
+      $suspension_duration_setting        = new Setting;
+      $suspension_duration_setting->name  = 'suspension_duration';
+      $suspension_duration_setting->value = $suspension_duration;
+
+      //save in database
+      $suspension_duration_setting->save();
+    }
 
     //get send email setting
     $send_email_model = Setting::where('name', '=', 'send_email')->first();
@@ -240,11 +323,21 @@ class AdminController extends BaseController
       //save changes
       $send_email_model->save();
     }
+    else
+    {
+      //create new suspension setting
+      $send_email_setting        = new Setting;
+      $send_email_setting->name  = 'send_email';
+      $send_email_setting->value = $send_email;
+
+      //save in database
+      $send_email_setting->save();
+    }
 
     //get registration status
     $registration_status_model = Setting::where('name', '=', 'registration')->first();
 
-    if ($send_email_model != NULL)
+    if ($registration_status_model != NULL)
     {
       //update the setting
       $registration_status_model->value = $registration_status;
@@ -252,9 +345,19 @@ class AdminController extends BaseController
       //save changes
       $registration_status_model->save();
     }
+     else
+    {
+     //create new suspension setting
+      $registration_status_setting=new Setting;
+      $registration_status_setting->name='registration_status';
+      $registration_status_setting->value=$registration_status_setting;
+      
+      //save in database
+      $registration_status_setting->save();
+    }
 
     //take user back to forum settings back with sucess message
-    return Redirect::back()->with('flash_notice', 'Changes Saved');
+    return Redirect::route('forum_settings')->with('flash_notice', 'Changes Saved');
   }
 
   //RETURNS A VIEW WITH A FORUM SETTINGS

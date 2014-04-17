@@ -1,5 +1,11 @@
 <?php
 
+//THIS CLASS IS A CONTROLLER FOR A NORMAL USER
+//IT WILL RESPOND TO ALL ACTIONS MADE A NORMAL USER
+//A NORMAL USER CAN LOGIN,POST COMMENTS,
+//VIEW HIS PROFILE,VIEW HIS ACTIVITY ON THE FORUM,
+//CHANGE SETTINGS LIKE PASSWORDS ETC
+//NOTE THAT A NORMAL USER CANT START A CONVERSATION
 class UserController extends BaseController
 {
 
@@ -18,10 +24,10 @@ class UserController extends BaseController
       //get approval setting
       $approval_setting            = Setting::where('name', '=', 'approval')->first();
       $email_confirmation_setting  = Setting::where('name', '=', 'send_email')->first();
-      $payment_duration_setting= Setting::where('name', '=', 'payment_duration')->first();
+      $payment_duration_setting    = Setting::where('name', '=', 'payment_duration')->first();
       $approval_required           = ($approval_setting->value) === 'Yes' ? TRUE : FALSE;
       $email_confirmation_required = ($email_confirmation_setting->value) === 'Yes' ? TRUE : FALSE;
-      $payment_duration=$payment_duration_setting->value;
+      $payment_duration            = $payment_duration_setting->value;
       $user_status                 = Auth::user()->status;
 
       //if user has not yet been approved by admin and the admin must first approve
@@ -84,18 +90,17 @@ class UserController extends BaseController
           return Redirect::route('login')->withErrors('Sorry but your account has been suspended.Try again after ' . $suspension_duration . ' days')->withInput();
         }
       }
-      
+
       //the users free period is done.time to pay up sucker
       else if (Utilities::GetYearsGoneBy(Auth::user()->created_at) >= $payment_duration)
       {
-          //log him out
-          Auth::logout();
+        //log him out
+        Auth::logout();
 
-          //redirect with sorry message
-          return Redirect::route('login')->withErrors('Sorry but your days of free access are done.pliz proceed here and pay up sucker');
-       
+        //redirect with sorry message
+        return Redirect::route('login')->withErrors('Sorry but your days of free access are done.pliz proceed here and pay up sucker');
       }
-      
+
       //else authentication sucess! take him to see conversations from account
       else
       {
@@ -262,12 +267,10 @@ class UserController extends BaseController
 
   public function Test()
   {
-    $user         = User::find(1);
-    echo $user;
-    $date         = $user->updated_at;
-    echo $date;
-    $time_elapsed = $this->TimeElapsed($date);
-    return 'time_elapsed=' . $time_elapsed;
+    $user = User::find(1);
+    echo $user . '<br/>';
+    Utilities::SendConfirmationEmail($user);
+    return 'email_sent= sucess<br/>';
   }
 
   //GIVEN A USER ID THIS RETURNS THE ID OF THE USER
@@ -365,7 +368,7 @@ class UserController extends BaseController
     return View::make('layouts.settings')->with('user', $user)->with('time_elapsed', $time_elapsed)->with('specialities', $specialities);
   }
 
-  //THIS RETURNS A VIEW WITH ALL POSTS IN A GIVEN CONVERSATIO
+  //THIS RETURNS A VIEW WITH ALL POSTS IN A GIVEN CONVERSATION
   public function GetPostsInConversation()
   {
     //get the id of the conversation 
@@ -377,34 +380,74 @@ class UserController extends BaseController
     //get all the posts in the conversation
     $posts = Post::where('conversation_id', '=', $conversation_id)->get();
 
-
-
-    //for each post get the user id
-    //use the id to get the user from the user table
     $users = array();
 
     foreach ($posts as $post)
     {
-      //echo 'post content='.$post->content;
+      //get id of user who made post
       $user_id = $post->user_id;
 
+      //get user
       $user = User::find($user_id);
 
-      //if no user found
+      //if no user found which is rare
       if ($user == null)
       {
         continue;
       }
 
+      //add user to array
       array_push($users, $user);
     }
     //create a view with all the posts
     return View::make('layouts.posts')->with('posts', $posts)->with('id', $conversation_id)->with('users', $users);
   }
 
+  //RETURNS THE POST THE USER HAS SELECTED TO EDIT
+  public function GetPostToEdit()
+  {
+    //get the post id
+    $post_id = Input::get('id');
+
+    //validate the data
+    $validator = Validator::make(array('id' => $post_id), array('id' => 'required|Integer'));
+
+    //if the validator fails
+    if ($validator->fails())
+    {
+      //send him back where ever he came from with errors
+      return Redirect::back()->withErrors($validator);
+    }
+
+    //get the post 
+    $post = Post::find($post_id);
+
+    if ($post != NULL)
+    {
+      //get user who created post
+      $user_id = $post->user_id;
+      $user    = User::find($user_id);
+
+      //if he isnt null
+      if ($user != NULL)
+      {
+        //send him to edit page
+        $posts = array($post);
+        $users = array($user);
+        return View::make('layouts.edit')->with('posts', $posts)->with('users', $users);
+      }
+
+      //send him back where ever he came from with errors
+      return Redirect::back()->withErrors('Failed to find user associated with Post');
+    }
+    //send him back where ever he came from with errors
+    return Redirect::back()->withErrors('Failed to find Post');
+  }
+
   //THIS ATTEMPTS TO ADD A USERS POST TO A CONVERSATION
   public function TryToPostToConversation()
   {
+    //create new post
     $post = new Post;
 
     //get user input
@@ -423,6 +466,30 @@ class UserController extends BaseController
       return Redirect::back()->withErrors($validator);
     }
 
+    //if user has uploaded an attachment
+    if (Input::file('attachment') != null)
+    {
+
+      //get attachment
+      $file = Input::file('attachment');
+
+      //get file destination
+      $destination = 'attachments/';
+
+      //rename file
+      $file_name = str_random(6) . '_' . $file->getClientOriginalName();
+
+      //move file to destination
+      $upload_sucess = $file->move($destination, $file_name);
+
+      //save attachment
+      $post->name_of_attachment = $file_name;
+    }
+    else
+    {
+      $post->name_of_attachment = '';
+    }
+
     //get conversation id from session
     $conversation_id = Session::get('conversation_id');
 
@@ -431,8 +498,11 @@ class UserController extends BaseController
     $post->content         = $reply;
     $post->user_id         = Auth::user()->id;
     $post->conversation_id = $conversation_id;
+    $post->link_to_video   = '';
     $post->created_at      = $now;
     $post->updated_at      = $now;
+
+    //save post in database
     $post->save();
 
     //update user last active coloum
@@ -441,29 +511,101 @@ class UserController extends BaseController
     //save changes
     Auth::user()->save();
 
-    //reload all the posts in the conversation
-    $posts = Post::where('conversation_id', '=', $conversation_id)->get();
+    //redirect user
+    return Redirect::route('posts', array('id' => $conversation_id));
+  }
 
-    $users = array();
+  //THIS ATTEMPTS TO EDIT A USERS POST IN A CONVERSATION
+  public function TryToEditPost()
+  {
+    //get user input
+    $post_id  = Input::get('id');
+    $new_post = Input::get('reply');
 
-    foreach ($posts as $post)
+    //data to validate
+    $data = array(
+        'id'      => $post_id,
+        'content' => $new_post
+    );
+
+    //validation rules
+    $rules = array(
+        'id'      => 'required|Integer',
+        'content' => 'required'
+    );
+
+    //if validator fails
+    $validator = Validator::make($data, $rules);
+
+    //if validation fails
+    if ($validator->fails())
     {
-      $user_id = $post->user_id;
-
-      $user = User::find($user_id);
-
-      //if no user found
-      if ($user == null)
-      {
-        continue;
-      }
-
-      //push to array
-      array_push($users, $user);
+      //send user back from were ever he came from with erros
+      return Redirect::back()->withInput()->withErrors($validator);
     }
 
-    //create a view with all the posts
-    return View::make('layouts.posts')->with('posts', $posts)->with('id', $conversation_id)->with('users', $users);
+    //get the post 
+    $post = Post::find($post_id);
+
+    //if post is not null 
+    if ($post != NULL)
+    {
+      //update post content
+      $now              = date('Y-m-d H:i:s');
+      $post->content    = $new_post;
+      $post->updated_at = $now;
+
+      //save changes
+      $post->save();
+
+      //redirect user
+      $conversation_id = Session::get('conversation_id');
+      return Redirect::route('posts', array('id' => $conversation_id))->with('id', $conversation_id)->with('flash_notice', 'Post Updated');
+    }
+
+    //send user back from were ever he came from with erros
+    return Redirect::back()->withInput()->withErrors('Failed to Update Post');
+  }
+
+  //THIS DELETES A POST FROM A CONVERSATION
+  public function DeletePost()
+  {
+    //get id of post
+    $post_id = Input::get('id');
+
+    //validate id
+    $validator = Validator::make(array('id' => $post_id), array('id' => 'required|Integer'));
+
+    //if validation fails
+    if ($validator->fails())
+    {
+      //send user back to whatever page he came from with errors
+      return Redirect::back()->withErrors($validator);
+    }
+
+    //find the post
+    $post = Post::find($post_id);
+
+    //if post isnt null
+    if ($post != NULL)
+    {
+      //get id of user who created post
+      $user_id = $post->user_id;
+
+      //make sure that the user who is deleting is the one currently logged in
+      if ($user_id == (Auth::user()->id) || (Auth::user()->account_type) === 'Administrator')
+      {
+        //delete post
+        $post->delete();
+
+        //redirect user to posts page
+        $conversation_id = Session::get('conversation_id');
+        return Redirect::route('posts', array('id' => $conversation_id))->with('id', $conversation_id)->with('flash_notice', 'Post deleted successfully');
+      }
+    }
+
+    //redirect user back from wherever he came from with errors
+    return Redirect::back()->withErrors('Failed to delete Post');
   }
 
   //THIS RETURNS A VIEWTO ENABLE USER TO CHANGE HIS PASSWORD OR EMAIL
@@ -685,7 +827,7 @@ class UserController extends BaseController
       $user->save();
     }
 
-    return View::make('layouts.login')->with('flash_notice', 'Welcome,Login to get started');
+    return redirect::route('login')->with('flash_notice', 'Welcome,Login to get started');
   }
 
   //RETURNS A VIEW DETAILING THE USERS ACTIVITIES

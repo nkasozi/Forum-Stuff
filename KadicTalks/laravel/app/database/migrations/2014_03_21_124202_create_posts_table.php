@@ -18,8 +18,8 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('content');
-            $table->string('name_of_attachment');
-            $table->string('link_to_video');
+            $table->string('name_of_attachment')->nullable();
+            $table->string('link_to_video')->nullable();
             $table->integer('conversation_id');
             $table->timestamps();
         });

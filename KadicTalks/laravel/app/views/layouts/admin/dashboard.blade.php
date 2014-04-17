@@ -10,7 +10,7 @@
        
         @for($i=0;$i<count($statistics);$i++)
          
-          <!-- old password field -->
+          <!-- STATISTICS DASHBOARD -->
           <div class="col">
             <div class="settings_category_left">
               <p>
