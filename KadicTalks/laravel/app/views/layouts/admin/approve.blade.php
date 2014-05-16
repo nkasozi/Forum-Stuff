@@ -9,7 +9,7 @@
     <div class="row">
       <div class="col">
         
-        <h4>Members to Approve</h4>
+        <h4><b>Members To Approve</b></h4>
         
         <?php
         $approval_setting = Setting::where('name', '=', 'approval')->first();
@@ -27,7 +27,7 @@
             
             <div class="settings_category_left">
 
-              <p>{{$users[$i]->username}} with the email {{$users[$i]->email}} </p>
+              <p><a href="profile?id={{$users[$i]->id}}">{{$users[$i]->full_name}}</a> with the email {{$users[$i]->email}} </p>
             </div>
             
             <div class="settings_category_right">

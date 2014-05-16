@@ -6,15 +6,15 @@
   <div id="dashboard_content">
     <div class="row">
       <div class="col">
-        <h4>Forum Statistics</h4>
        
         @for($i=0;$i<count($statistics);$i++)
          
-          <!-- STATISTICS DASHBOARD -->
+          <!-- old password field -->
           <div class="col">
             <div class="settings_category_left">
               <p>
                 @if($i==0)
+                 <h4><b>Forum Statistics</b></h4>
                 {{ Form::label('members', 'Members') }}
                 @endif
                 @if($i==1)

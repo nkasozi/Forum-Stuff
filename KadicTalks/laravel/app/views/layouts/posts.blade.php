@@ -7,6 +7,7 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet"> 
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> 
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+
 <!-- include summer note css/js-->
 <link href="css/summernote.css"  rel="stylesheet">
 <script src="js/summernote.min.js"></script>
@@ -48,7 +49,36 @@
         </div>
 
         <!--footer of post -->
+		@if(Auth::check())
+		
         @if((($posts[$i]->name_of_attachment)!='')||(($posts[$i]->link_to_video)!='')||(Auth::check()&&(($users[$i]->id)==(Auth::user()->id))||((Auth::user()->account_type)==='Administrator')))
+
+        <div class="profile_comment_attachment">     
+          <ul>  
+
+            @if(($posts[$i]->name_of_attachment)!='')
+            <li><a href="attachments/{{$posts[$i]->name_of_attachment}}" target="_blank"><img src="images/attachment.png" /></a></li>
+            @endif
+
+            @if(($posts[$i]->link_to_video)!='')
+            <li><a href="{{$posts[$i]->link_to_video}}" target="_blank"><img src="images/video.png"/></a></li>   
+            @endif 
+            
+            @if(($users[$i]->id)==(Auth::user()->id)||((Auth::user()->account_type)==='Administrator'))
+            <li><a href="delete_post?id={{$posts[$i]->id}}" onclick="return confirm('Do You Really Want To Delete This Post')">&nbsp;&nbsp;<img src="images/delete.png"></a></li>   
+            @endif
+
+            @if(($users[$i]->id)==(Auth::user()->id))
+            <li><a href="edit?id={{$posts[$i]->id}}"><img src="images/edit.png"/></a></li>     
+            @endif
+
+          </ul>
+        </div>
+		@endif
+		
+		@else
+		
+		@if((($posts[$i]->name_of_attachment)!='')||(($posts[$i]->link_to_video)!=''))
 
         <div class="profile_comment_attachment">     
           <ul>  
@@ -61,22 +91,12 @@
             <li><a href="{{$posts[$i]->link_to_video}}" target="_blank"><img src="images/video.png"/></a></li>   
             @endif
 
-            @if(Auth::check())
-            
-            @if(($users[$i]->id)==(Auth::user()->id)||((Auth::user()->account_type)==='Administrator'))
-            <li><a href="delete_post?id={{$posts[$i]->id}}" onclick="return confirm('Do You Really Want To Delete This Post')">&nbsp;&nbsp;<img src="images/delete.png"></a></li>   
-            @endif
-
-            @if(($users[$i]->id)==(Auth::user()->id))
-            <li><a href="edit?id={{$posts[$i]->id}}"><img src="images/edit.png"/></a></li>     
-            @endif
-
-            @endif
 
           </ul>
         </div>
-
-        @endif
+		@endif
+		
+		@endif
 
       </div>
     </div>

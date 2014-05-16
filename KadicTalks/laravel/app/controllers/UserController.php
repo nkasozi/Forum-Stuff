@@ -374,11 +374,11 @@ class UserController extends BaseController
     //get the id of the conversation 
     $conversation_id = Input::get('id');
 
-    //echo 'conversation_id='.$conversation_id;
+    //store conversation id in session
     Session::put('conversation_id', $conversation_id);
 
     //get all the posts in the conversation
-    $posts = Post::where('conversation_id', '=', $conversation_id)->get();
+    $posts = Post::orderBy('created_at', 'asc')->where('conversation_id', '=', $conversation_id)->get();
 
     $users = array();
 

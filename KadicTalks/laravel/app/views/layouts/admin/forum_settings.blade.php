@@ -12,7 +12,7 @@
 
       <!-- drop down field for appearance -->
       <div class="col">
-        <h4>Change Forum Settings Here</h4>
+        <h4><b>Change Forum Settings Here</b></h4>
         <div class="settings_category_left">
           <h4>
             {{ Form::label('appearance', 'Appearance [Theme]') }}

@@ -7,6 +7,7 @@ position:relative;
 float:left;
 }
 #settings_menu{
+padding-top:20px;
 float:left;
 width:350px;
 height:400px;
@@ -85,7 +86,7 @@ font-size:14px;
 }
  .row h4,h3
 {
-font-size:14px;
+font-size:12px;
 color:#565858;
 }
  .row .col{
@@ -153,6 +154,7 @@ border:1px solid #bbbcbc;
 width:350px;
 float:left;
 padding-bottom:10px;
+font-weight:5px;*
 }
 .settings_category_left h4{
 margin-top:30px;

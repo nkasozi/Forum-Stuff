@@ -9,6 +9,37 @@
     <link href="css/button_switch.css" rel="stylesheet" media="screen">
     <link href="css/home_styles.css" rel="stylesheet" media="screen">
 
+    
+    <!-- include libraries(jQuery, bootstrap, font awesome) -->
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script> 
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.no-icons.min.css" rel="stylesheet"/> 
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> 
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- include summer note css/js-->
+    <link href="css/summernote.css"  rel="stylesheet"/>
+    <script src="js/summernote.min.js"></script>
+
+    <script type="text/javascript">
+
+      $(document).ready(function() {
+
+
+        $('#summernote').summernote({
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link']]
+          ],
+          height: "300px",
+          focus: true
+        });
+      });
+      var postForm = function() {
+        var content = $('textarea[name="post"]').html($('#summernote').code());
+      }
+    </script>  
+    
   </head>
   <body>
     <div id="content_wrapper">

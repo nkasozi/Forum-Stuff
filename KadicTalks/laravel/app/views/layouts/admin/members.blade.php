@@ -6,7 +6,7 @@
   <div id="dashboard_content">
     <div class="row">
       <div class="col">
-        <h4>All Members</h4>
+        <h4><b>All Members</b></h4>
         @if(count($users)>0)
 
         @foreach($users as $user)
